@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css">
+    <link rel="stylesheet" href="youTubefeature.css">
+    <link rel="stylesheet" type="text/css" href="style.css">
+    <% if(page === 'register'|| page ==='login'){ %>    
+      <link rel="stylesheet" type="text/css" href="register.css">
+     
+  <% } %>
+</head>
+<body>
+<%- include('pages/' + page + '.ejs'); %>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.0/jquery.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"></script>
+<script type="text/javascript" src="socket.io/socket.io.js"></script>
+<script type="text/javascript" src="handle.js"></script>
+<% if(page === 'home'){ %>    
+    <script type="text/javascript" src="youTubehandle.js"></script>
+    <link rel="stylesheet" type="text/css" href="media_query.css">
+<% } %>
+
+</div>
+</body>

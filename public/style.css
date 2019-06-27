@@ -1,0 +1,77 @@
+body{
+  background: rgb(0, 0, 0);
+  color: rgb(33, 16, 129);
+  margin: 0;
+  padding: 0;
+  overflow-x: hidden;
+}
+.btn-login{
+  background: rgb(91, 248, 52);
+  padding: 5px 10px;
+  float: right;
+}
+/* Create three unequal columns that floats next to each other */
+.column {
+    float: left;
+    padding: 10px;
+  }
+  
+  /* Left and right column */
+  .chat-side {
+    height: auto;
+    background: none;
+    color: gray;
+  }
+ 
+  h6{
+    color: rgb(3, 192, 3);
+  }
+  
+  .row:after {
+    display: flex;
+    
+  }
+  #message{
+    margin-bottom: 90px;
+  }
+  #text-chat{
+    bottom: 5px;
+    position: fixed;
+    border-radius: 5px;    
+  }
+  #left-chat{
+    text-align: left;
+  }
+  .right-chat{
+    text-align: right;
+  }
+  
+  #search_items{
+    display: flex;
+    border-top: dotted black 1px;
+    padding: 10px;
+    position: fixed;
+    
+  }
+  
+  activeUser{  
+    position: fixed;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-wrap: wrap;
+    bottom: 10px;
+    width: 100%;
+  }
+  .user{
+    padding: 30px;
+    border-radius: 50%;
+    background: pink;
+    margin: 3px;
+  }
+  #the-host{
+    border: 3px yellow solid;
+  }
+  .user{
+    cursor: pointer;
+  }
