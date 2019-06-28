@@ -10,7 +10,6 @@ Funchat is a project in Web System Development Techniques subject made by [SEOTe
 
 * ![Login & Registration](/Users/macintoshhd/Desktop/Github/FunChat/funchat/public/img/lg&regis.png)
 
-
 2. _Features_
 
 ## Contributing 
