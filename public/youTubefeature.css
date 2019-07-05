@@ -7,19 +7,9 @@ h4,p {
 }
 
 p {	
-	color: grey;
 	font-size: 0.7rem;
 }
 
-body {
-	background-color: #eee;
-}
-
-.container {
-	width: 560px;
-	background-color: #fff;
-	margin: 0 auto;
-}
 
 header,
 #sec-video {
@@ -38,14 +28,14 @@ article {
 	display: flex;
 	align-items: center;
 	padding: 8px 12px;
-	border: 2px solid white;
+	border: 2px solid none;
 	border-radius: 8px;
 	margin: 0 auto;
 	
 }
 article:hover {
-	border: 2px solid #20af1b;
-	background: rgb(232, 241, 205);
+	border: 2px solid none;
+	background: rgb(192, 192, 192);
 	cursor: pointer;
 }
 .thumb {
@@ -56,3 +46,24 @@ article:hover {
 .details {
 	padding: 8px 22px;
 }
+
+.details >p{
+	color: rgb(26, 174, 175);
+}
+.boxList{
+	position: absolute;
+}
+#listkeywords{
+	padding: 0;
+}
+#listkeywords>li{
+	background: pink;
+	color: white;
+	text-align: left;
+}
+.selected{
+	color: black;
+}
+input::-webkit-calendar-picker-indicator {
+	display: none;
+  }

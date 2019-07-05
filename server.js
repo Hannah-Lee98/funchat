@@ -1,7 +1,7 @@
 const http = require('http');
 const express = require('express');
 const bodyParser = require('body-parser'); //dịch data từ form
-const cookieParser = require('cookie-parser') //taho tác vs cookie
+const cookieParser = require('cookie-parser') 
 const socketIO = require('socket.io'); // websocket  -- realtime
 const jwt = require('jsonwebtoken'); // xác minh 
 const config = require('./config');
@@ -16,9 +16,10 @@ const User = mongoose.model('Users',{
     username:String, 
     password: String
   })
-  
-// var dbUrl='mongodb://usernam:<password>@funchat-shard-00-00-alt40.mongodb.net:27017,funchat-shard-00-01-alt40.mongodb.net:27017,funchat-shard-00-02-alt40.mongodb.net:27017/test?ssl=true&replicaSet=funchat-shard-0&authSource=admin&retryWrites=true&w=majority'
-  
+
+
+var dbUrl ='mongodb://username:<password>@cluster0-shard-00-00-ucmmd.mongodb.net:27017,cluster0-shard-00-01-ucmmd.mongodb.net:27017,cluster0-shard-00-02-ucmmd.mongodb.net:27017/User?ssl=true&replicaSet=Cluster0-shard-0&authSource=admin&retryWrites=true&w=majority'
+
 mongoose.connect(dbUrl, { useNewUrlParser: true } , (err) => { 
     console.log('mongodb connected',err);
   })
@@ -28,19 +29,23 @@ mongoose.connect(dbUrl, { useNewUrlParser: true } , (err) => {
   var connectedUsers = {};
   var listVideos = [];
 
-
-  
 io.on('connection', (socket) => {
-    console.log(activeUserList);
+   
     var currentRoom=[];
-    socket.on('disconnect', () => {     
-        activeUserList.splice( activeUserList.indexOf(socket.username),1);
+    socket.on('disconnect', () => { 
+        
+        var activeUserIndex =activeUserList.indexOf(socket.username);
+        if(activeUserIndex!==-1){
+            activeUserList.splice(activeUserIndex,1);
+            socket.broadcast.emit('user-left',socket.username); 
+            socket.broadcast.emit('active-user-list',activeUserList);
+            socket.broadcast.emit('streamList',listVideos);
+        }
         delete connectedUsers[socket.username];              
         var index = listVideos.findIndex(obj=>obj.username==socket.username)
         if(index!==-1)
-            listVideos.splice(index,1)        
-        console.log(listVideos);
-        io.emit('active-user-list',activeUserList);         
+            listVideos.splice(index,1)  
+                    
     });
 
     socket.on('register', async (data, callback) => {
@@ -73,7 +78,8 @@ io.on('connection', (socket) => {
                 },
                 error: null
             })     
-            activeUserList.push(socket.username);                 
+            activeUserList.push(socket.username); 
+                           
             return;
         }
         callback({
@@ -81,6 +87,7 @@ io.on('connection', (socket) => {
             error: 'Tên đăng nhập hoặc mật khẩu không đúng hoặc không tồn tại'
         })
     });
+
     //thong báo số người online
     socket.on('Room-data',()=>{        
         io.emit('active-user-list',activeUserList)
@@ -89,12 +96,12 @@ io.on('connection', (socket) => {
     socket.on('join',async (data, callback) => {        
         const {token} = data; 
         try {            
-            socket.user = await jwt.verify(token || '', config.jwtKey);                 
+            socket.user = await jwt.verify(token, config.jwtKey);                
                          
             socket.username= socket.user.username;
             connectedUsers[socket.username] = []; //quản lí room
             connectedUsers[socket.username].socket=socket;
-
+            socket.broadcast.emit('new-user',socket.username);
             if(activeUserList.indexOf(socket.username)<0)  //quản lí danh sách người dùng
                 activeUserList.push(socket.username);           
             callback({
@@ -123,7 +130,6 @@ io.on('connection', (socket) => {
         currentRoom = socket.username;
         // create a room 
         socket.join(currentRoom);    
-        console.log(data.username+'is watching video');
         var searchVar = listVideos.findIndex(obj=>obj.username==data.username);   
         if(searchVar>=0){
             listVideos[searchVar].id = data.id;      // update value      
@@ -131,7 +137,7 @@ io.on('connection', (socket) => {
         else  listVideos.push({id:data.id, username: data.username,saveTime:0}) // add item
         socket.broadcast.emit('watch-this-video',data);
         socket.to(currentRoom).emit('change-video',data);
-        console.log(listVideos)
+        
     })   
     
 
@@ -187,19 +193,8 @@ app.set('/views', 'views');
 app.use(express.static(__dirname + '/public'));
 
 
-//chứng thực user đã đăng nhập chưa
-const auth = (req, res, next) => {
-    const {token} = req.cookies;
-    try {
-        req.user = jwt.verify(token ||'', config.jwtKey);
-        next();
-    } catch (e) {
-        console.error(e);
-        res.redirect('/login');
-    }
-};
 // rendertrang
-app.get('/', auth, (req, res) => res.render('index.ejs', {page: 'home'}));
+app.get('/', (req, res) => res.render('index.ejs', {page: 'home'}));
 app.get('/login', (req, res) => res.render('index.ejs', {page: 'login'}));
 app.get('/register', (req, res) => res.render('index.ejs', {page: 'register'}));
 

@@ -5,6 +5,7 @@ var TenDangNhap;
 const internalRedirect = (path) => {
     window.location.href = `${window.origin}${path}`
 };
+// follow https://www.w3schools.com/js/js_cookies.asp
 
 function setCookie(cname, cvalue, exdays) {
     const d = new Date();
@@ -63,24 +64,85 @@ $('#login').on('submit', (event) => {
     });
 });
 
+
 socket.on('server-send-message-to-the-host',(message)=>{
-    
-    $('#message').append(`<div class='right-chat'>
-                            <p>  ${message.message} </p>
-                        </div>`)    
+    var arrLink=['http://','https://','shorturl.at/']
+    let posHead=-1;
+    for(i=0;i< arrLink.length;i++){
+        let j=message.message.search(arrLink[i])
+        if( j>=0)
+        {   posHead=j; 
+            break;  
+             }
+    }
+    if(posHead>=0){ 
+           
+        let length = message.message.length;
+        let posTail =length ;
+        let link='';
+        for(var i=posHead; i<length ;i++ ){
+            if(message.message[i]!==' ')
+                link+=message.message[i];
+            else
+            {
+                posTail=i;
+                break;
+            } 
+        }
+
+        $('#spaceForMesssages').append(`<div class='right-chat'>
+                            <p>`+message.message.substring(0,posHead)+`<a href="${message.message}" target="_blank"> ${link} </a>`+message.message.substring(posTail,length) + `</p>
+                        </div>`) } 
+    else 
+        $('#spaceForMesssages').append(`<div class='right-chat'><p> ${message.message}</p> </div>`)
+
+    $('#message').scrollTop($('#spaceForMesssages').height());
 })
 
 
 socket.on('server-send-message-to-users',(message)=>{
-    $('#message').append(`<div id='left-chat'>
+    var arrLink=['http://','https://','shorturl.at/']
+    let posHead=-1;
+    for(i=0;i< arrLink.length;i++){
+        let j=message.message.search(arrLink[i])
+        if( j>=0)
+        {   posHead=j; 
+            break;  
+             }
+    }
+    if(posHead>=0){
+           
+        let length = message.message.length;
+        let posTail =length ;
+        let link='';
+        for(var i=posHead; i<length ;i++ ){
+            if(message.message[i]!==' ')
+                link+=message.message[i];
+            else
+            {
+                posTail=i;
+                break;
+            } 
+        }
+
+        $('#spaceForMesssages').append(`<div class='left-chat'>
+                            <h6> ${message.name} </h6>
+                            <p>`+message.message.substring(0,posHead)+`<a href="${message.message}" target="_blank"> ${link} </a>`+message.message.substring(posTail,length) + `</p>
+                        </div>`) } 
+    else 
+    $('#spaceForMesssages').append(`<div class='left-chat'>
                             <h6> ${message.name} </h6>
                             <p>  ${message.message} </p>
-                        </div>`)    
+                        </div>`)  
+    $('#message').scrollTop($('#spaceForMesssages').height());
+    
 })
+
 // xử lí gửi tin nhắn
 $(() => {
     $('#text-chat').keydown(function(event){
-        if(event.which === 13 && event.shiftKey == false){                  
+        if(event.which === 13 && event.shiftKey == false){ 
+            if($("#text-chat").val()!="")                 
             socket.emit('Client-send-message',{
                 name: TenDangNhap,
                 message:$("#text-chat").val()}
@@ -97,12 +159,12 @@ socket.on('connect', () => {
     if (window.location.pathname === '/') {
         socket.emit('join', {token: getCookie('token')}, (res) => {
             if (res.success) {
-                console.log('join room success');
+                // console.log('join room success');
                 TenDangNhap=res.username;
                 socket.emit('Room-data');
             } else {
                 console.log(res.error);
-                internalRedirect('/login');             
+                internalRedirect('/login');            
                 
             }
         });
@@ -110,26 +172,50 @@ socket.on('connect', () => {
 });
 
 socket.on('active-user-list',(activeUserList)=>{
-    console.log(activeUserList)
-    $('activeUser').html(''); //xóa số user cũ để hiển thị toàn bộ user đang đăng nhập mà không bị trùng
+    
+    $('activeUser').html(''); 
     activeUserList.forEach(i => {
         // user là host tại local đăng nhập
         if(i===TenDangNhap)
-            $('activeUser').append(`<div class="user" id="the-host">`+TenDangNhap.substring(0, 3)+`</div>`)
-        else{
-            $('activeUser').append(`<div class="user" id='${i}'>`+i.substring(0, 3)+`</div>`)
-        }
+            $('activeUser').append(`<div class="user" aria-label="host" id="the-host"  >`+TenDangNhap.substring(0,3)+`</div>`)
+        else
+            $('activeUser').append(`<div class="user" aria-label= ${i} >`+i.substring(0,3)+  ` </div>`)
+        
     });
    
     
 })
 
+socket.on('new-user',(data)=>{
+    if(data!==null)
+    $('#spaceForMesssages').append(`<div class='userInOut'>${data} have just joined the room</div>`)
+})
+socket.on('user-left',(data)=>{
+    if(data!==null)
+    $('#spaceForMesssages').append(`<div class='userInOut'>${data} just left the room</div>`)
+})
+
+$('activeuser') .on('mouseenter', '.user', function () {
+    var i= $(this).attr('aria-label');
+    if(i!='host')
+    $( this ).append( $( "<div class='pop-up-name'>"+i+" </div>" ) );
+})
+$('activeuser') .on('mouseleave','.user', function () {
+    $( '.pop-up-name').remove();
+})
+
 
 $('#btn-register').click(()=>{
-    window.location.assign('http://localhost:4444/register')
-})
+    window.location.assign('https://funchatapp2019.herokuapp.com/register')
+});
 $('#btn-login').click(()=>{
-    window.location.assign('http://localhost:4444/login')
+    window.location.assign('https://funchatapp2019.herokuapp.com/login')
+});
+
+$('#logout').click(()=>{
+    let confirmLogout = confirm('bạn có chắc chắn muốn thoát?')
+    if(confirmLogout===true)  
+        {   setCookie('token',null);
+            internalRedirect('/login');            
+        }
 })
-
-

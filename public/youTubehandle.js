@@ -1,16 +1,3 @@
-// YOU WILL NEED TO ADD YOUR OWN API KEY IN QUOTES ON LINE 5, EVEN FOR THE PREVIEW TO WORK.
-// 
-// GET YOUR API HERE https://console.developers.google.com/apis/api
-
-
-// https://developers.google.com/youtube/v3/docs/playlistItems/list
-
-// https://console.developers.google.com/apis/api/youtube.googleapis.com/overview?project=webtut-195115&duration=PT1H
-
-// <iframe width="560" height="315" src="https://www.youtube.com/embed/qxWrnhZEuRU" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-
-// https://i.ytimg.com/vi/qxWrnhZEuRU/mqdefault.jpg
-
 
 
     $('#sec-video').hide();
@@ -18,25 +5,26 @@
     var player,time_update_interval = 0;
 
   
-    var key = 'AIzaSyDkH-zFq6_tczPDlrNENywuO6ppYo7fN78';
+    var key = 'AIzaSyCCS-G9jZJsgpf6avAM1D5v4EZezklAPkA';
     var URL = 'https://www.googleapis.com/youtube/v3/search';
-    // get datas
+    // get data
     var options = {
         q: encodeURIComponent($("#search-vid").val()).replace(/%20/g, "+") , //keyword mà người dùng tìm kiếm
         part: 'snippet',
         key: key,
-        maxResults: 15, 
+        maxResults: 20, 
         type: 'video'       
     }
     
+
     $('#search').click(function(){     
-        loadVids();        
+        loadVids();
+        $('main').scrollTop(0);      
     })     
     // load videos
     function loadVids() {     
         options.q= $("#search-vid").val(); 
-        $.getJSON(URL, options, function (data) {            
-          
+        $.getJSON(URL, options, function (data) {       
             resultsLoop(data);
         });
     }
@@ -101,23 +89,21 @@
     });
 
     socket.on('streamList',(listVideos)=>{    
-        listVideos.forEach(i => {      
-            console.log(listVideos) ;    
-            if(i.username!=TenDangNhap){                
-                $('#'+i.username).css({"border":"3px green solid"});
+        listVideos.forEach(i => {    
+             if(i.username!=TenDangNhap){                
+                $('[aria-label='+i.username+']').css({"border":"3px #5febff solid"})
             }
         });
     })
-    socket.on('watch-this-video', (data)=>{  
-        $('#'+data.username).css({"border":"3px green solid"})
-    })    
+    socket.on('watch-this-video', (data)=>{ 
+        $('[aria-label='+data.username+']').css({"border":"3px #5febff solid"});
+    })      
 
 
     $('activeuser').on('click', '.user', function () {
         var data;
-        data = $(this)[0].id; 
-        console.log(data);
-        if(data!='the-host'){
+        data = $(this).attr('aria-label'); 
+        if(data!='host'){
             player.pauseVideo();
             socket.emit('saveCurrentTimeOfMyVideo',player.getCurrentTime());
             socket.emit('join-this-room', data);
@@ -131,7 +117,7 @@
         }});
 
     function onPlayerStateChange(playerStatus) {
-         console.log(playerStatus.data)      
+          
         // if (playerStatus == -1) {//unstarted
         //     socket.emit('askCurrentTimeFrom')   
         // } else 
@@ -167,7 +153,6 @@
     })
 
     socket.on('playMyVideo',(data)=>{
-        console.log(data);
         player.cueVideoById(data.id, data.saveTime)
     })
 
@@ -186,7 +171,7 @@
         $('#sec-video').hide();
         $('#sec-chat').show();
     })
-    $('#btn-show-chat').hide();
+ $('#btn-show-chat').hide();
     $('#btn-hide-chat').on('click', function(){
         $('.screen-side').show();
         $('.chat-side').hide();
@@ -197,4 +182,32 @@
         $('.chat-side').show();
         $('#btn-show-chat').hide();
     })
+    
+//search-keyword
+
+var suggestion=$('#listkeywords');
+var suggestCallBack; // global var for autocomplete jsonp
+var url="https://suggestqueries.google.com/complete/search?callback=?";
+
+    $("#search-vid").autocomplete({
+        source: function(request, response) {    
+            $.getJSON(url,{
+                "hl":"vn", // Language
+                "ds":"yt", // Restrict lookup to youtube
+                "jsonp":"suggestCallBack", // jsonp callback function name
+                "q":request.term, // query term
+                "client":"youtube" // force youtube style response, i.e. jsonp
+              });          
+            suggestCallBack = function (data) {
+            
+                suggestion.html(``);
+                $.each(data[1], function(i, val) {                  
+                  suggestion.append(`<option class="list-group-item"> ${val[0]}</option>`);
+                });   
+                
+            };
+            
+        },
+        
+    });
     

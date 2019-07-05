@@ -1,14 +1,19 @@
 body{
-  background: rgb(0, 0, 0);
-  color: rgb(33, 16, 129);
+  background: -webkit-gradient(linear, left top, left bottom, from(#E55D87), to(#5FC3E4));
+	background-repeat: no-repeat;
+  color: rgb(241, 241, 241);
   margin: 0;
   padding: 0;
   overflow-x: hidden;
+  height: 100vh;
 }
 .btn-login{
-  background: rgb(91, 248, 52);
+  background: rgb(40, 192, 2);
   padding: 5px 10px;
   float: right;
+}
+a{
+  color: rgb(0, 88, 0);
 }
 /* Create three unequal columns that floats next to each other */
 .column {
@@ -19,12 +24,14 @@ body{
   /* Left and right column */
   .chat-side {
     height: auto;
-    background: none;
-    color: gray;
+    border-left: 1px solid gray;
+    background: #ffffff;
+    color: rgb(255, 255, 255);
+
   }
  
   h6{
-    color: rgb(3, 192, 3);
+   	color: rgb(100, 0, 17);
   }
   
   .row:after {
@@ -32,46 +39,124 @@ body{
     
   }
   #message{
-    margin-bottom: 90px;
+    margin: 40px 0 0 0px;
+    display: flex; 
+    flex-direction: column;
+    overflow: auto;
+    height: 77vh;
+    text-overflow: ellipsis;
+    overflow-x: hidden;
+  }
+  #spaceForMesssages{
+    width: 100%;
+    text-overflow: ellipsis ellipsis;
   }
   #text-chat{
-    bottom: 5px;
-    position: fixed;
-    border-radius: 5px;    
+    bottom: 0;
+    border-radius: 5px;
+    width: 100%;
+    position: relative;
+    background: #ffd4ee;
   }
-  #left-chat{
+  .left-chat{
     text-align: left;
+    
+	  color: rgb(40, 106, 250);
   }
   .right-chat{
-    text-align: right;
+    color:rgb(255, 7, 160);
+    text-align: right; 
+    padding:3px 5px 3px 15px;
+    
   }
-  
+
+  .right-chat>p, .left-chat>p{
+    font-size: 15px;
+    
+  }
+ 
   #search_items{
     display: flex;
     border-top: dotted black 1px;
     padding: 10px;
-    position: fixed;
+    margin-top: 40px;
     
   }
-  
+  #sec-chat{
+    padding-left: 5px
+  }
+  .videocontain{
+    display: flex; 
+    flex-direction: column;
+    overflow: auto;
+    height: 74vh;
+  }
   activeUser{  
     position: fixed;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-    bottom: 10px;
-    width: 100%;
+    display: flex;   
+    width: 100%; 
+    overflow: auto; 
+    bottom: 5px;     
   }
+  activeUser::before, activeUser::after{
+    content: '';
+    margin: auto;
+  }  
+
+  .scrollbar {
+    float: left;
+    height: 110px;
+    width: 75%;
+    background: none;
+    overflow-x: auto;    
+    }
+
   .user{
-    padding: 30px;
+    width: 100px;
+    height: 100px;
+    display: table-cell;
+    display: flex;
+   align-items: center; 
+   justify-content: center;
     border-radius: 50%;
-    background: pink;
+    background: #01a6ce;
     margin: 3px;
   }
   #the-host{
     border: 3px yellow solid;
+    background: rgb(197, 59, 82);
   }
   .user{
     cursor: pointer;
   }
+.hello{
+  position: fixed;
+}
+main{
+  margin-top: 40px
+}
+#btn-show-chat{
+  position: fixed;
+  margin: 10px;
+  background: rgb(83, 83, 83);
+}
+.pop-up-name{
+  color: black;
+  background: grey;
+  margin-bottom: 75px;
+  padding: 2px;
+  
+}
+.userInOut{
+  font-size: 13px;
+  font-style: italic;
+  color: rgb(12, 12, 12);
+  text-align: center;
+}
+#logout{
+  position: absolute;
+  top: 10px;
+  right: 0;
+  padding: 5px;
+  border-radius: 5px;
+}

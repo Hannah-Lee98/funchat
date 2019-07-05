@@ -6,16 +6,16 @@
             <div id="video-placeholder">
                 <!-- play video     -->
             </div>
-            
-            <activeUser>
-                
-    
-            </activeUser>
-    
+            <div class="scrollbar scrollbar-primary">
+                <activeUser class="force-overflow ">
+                    
+        
+                </activeUser>
+            </div>
         </div>
-        <!-- sửa lại -->
-        <!-- <button class="btn btn-primary" style="float: right"id="btn-show-chat"><</button> -->
+        <button class="btn btn-primary" id="btn-show-chat"><</button>
         <div class="col-sm-6 col-md-5 col-lg-3 col-12 column chat-side">
+            <button class="bth btn-dark" id="logout">Log out</button>
             <div class="hello">
                 <button class="btn btn-primary" id="btn-youtube">YouTube</button>
                 <button class="btn btn-primary" id="btn-chat-room">Chat</button>
@@ -25,19 +25,36 @@
     
             <section id="sec-video">
                 <div id="search_items" class="mb-3">
-                    <input class="form-control" type="text" id="search-vid" placeholder="what r you looking for?">
+                    <div>
+                        <input autocomplete="off" type="text" id="search-vid" data-toggle="collapse" list="listkeywords" role="button" aria-expanded="false"  placeholder="what r you looking for?" class="form-control">
+                        
+                    </div>
                     <button id="search" class="btn btn-primary" type="button">Search</button>
+                   
                 </div>
+                <div class="boxList">                                            
+                         <datalist class=" list-group collapse multi-collapse" id="listkeywords">
+                            
+                         </datalist>
+                       
+                    </div>
                 <div>
-                    <main>
+                    <main class="videocontain">
                         <!-- suggest   video -->
                     </main>
                 </div>
             </section>
                         
             <section id="sec-chat">
-                <div id='message'></div>      
-                <textarea name="newmessage" id="text-chat"  rows="3" placeholder="text message hear"></textarea>
+                <div id='message'>
+                   <div id="spaceForMesssages">
+                    <!-- chứa tin nhắn -->
+                   </div>                     
+                   
+                   
+                </div>      
+                <textarea name="newmessage" id="text-chat"  rows="3" placeholder="text message here"></textarea>
+        
             </section>
           
         </div>
